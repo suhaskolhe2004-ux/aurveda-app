@@ -11,6 +11,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.navArgument
+import com.example.aurveda.BuildConfig
 import com.example.aurveda.ui.screens.auth.LoginScreen
 import com.example.aurveda.ui.screens.auth.SignupScreen
 import com.example.aurveda.ui.screens.student.DashboardScreen
@@ -44,6 +45,7 @@ enum class Screen(val route: String) {
 fun AppNavigation(navController: NavHostController) {
     val backStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = backStackEntry?.destination?.route
+    val isAdminFlavor = BuildConfig.FLAVOR == "admin"
 
     // Shared ViewModels
     val authViewModel: AuthViewModel = viewModel()
@@ -57,7 +59,7 @@ fun AppNavigation(navController: NavHostController) {
         Screen.Notifications,
         Screen.Profile
     )
-    val showBottomNav = currentRoute in bottomNavScreens.map { it.route }
+    val showBottomNav = !isAdminFlavor && currentRoute in bottomNavScreens.map { it.route }
 
     Scaffold(
         bottomBar = {
@@ -89,7 +91,7 @@ fun AppNavigation(navController: NavHostController) {
                 LoginScreen(
                     viewModel = authViewModel,
                     onLoginSuccess = { isAdmin ->
-                        if (isAdmin) {
+                        if (isAdminFlavor || isAdmin) {
                             navController.navigate(Screen.AdminDashboard.route) {
                                 popUpTo(Screen.Login.route) { inclusive = true }
                             }
@@ -104,73 +106,75 @@ fun AppNavigation(navController: NavHostController) {
                     }
                 )
             }
-            composable(Screen.Signup.route) {
-                SignupScreen(
-                    viewModel = authViewModel,
-                    onSignupSuccess = {
-                        navController.navigate(Screen.Dashboard.route) {
-                            popUpTo(Screen.Signup.route) { inclusive = true }
-                            popUpTo(Screen.Login.route) { inclusive = true }
+            if (!isAdminFlavor) {
+                composable(Screen.Signup.route) {
+                    SignupScreen(
+                        viewModel = authViewModel,
+                        onSignupSuccess = {
+                            navController.navigate(Screen.Dashboard.route) {
+                                popUpTo(Screen.Signup.route) { inclusive = true }
+                                popUpTo(Screen.Login.route) { inclusive = true }
+                            }
+                        },
+                        onNavigateToLogin = {
+                            navController.popBackStack()
                         }
-                    },
-                    onNavigateToLogin = {
-                        navController.popBackStack()
-                    }
-                )
-            }
-            composable(Screen.Dashboard.route) {
-                DashboardScreen(coursesViewModel = coursesViewModel)
-            }
-            composable(Screen.Courses.route) {
-                CoursesScreen(
-                    viewModel = coursesViewModel,
-                    onNavigateToCourseDetail = { courseId ->
-                        navController.navigate(Screen.CourseDetail.createRoute(courseId))
-                    }
-                )
-            }
-            composable(
-                route = Screen.CourseDetail.route,
-                arguments = listOf(navArgument("courseId") { type = NavType.StringType })
-            ) { backStackEntry ->
-                val courseId = backStackEntry.arguments?.getString("courseId") ?: return@composable
-                CourseDetailScreen(
-                    courseId = courseId,
-                    viewModel = coursesViewModel,
-                    onNavigateBack = { navController.popBackStack() }
-                )
-            }
-            composable(Screen.Notes.route) {
-                NotesScreen(
-                    viewModel = notesViewModel,
-                    onNavigateToNoteDetail = { noteId ->
-                         navController.navigate(Screen.NoteDetail.createRoute(noteId))
-                    }
-                )
-            }
-            composable(
-                route = Screen.NoteDetail.route,
-                arguments = listOf(navArgument("noteId") { type = NavType.StringType })
-            ) { backStackEntry ->
-                 val noteId = backStackEntry.arguments?.getString("noteId") ?: return@composable
-                 NoteDetailScreen(
-                     noteId = noteId,
-                     viewModel = notesViewModel,
-                     onNavigateBack = { navController.popBackStack() }
-                 )
-            }
-            composable(Screen.Notifications.route) {
-                NotificationsScreen()
-            }
-            composable(Screen.Profile.route) {
-                ProfileScreen(
-                    viewModel = authViewModel,
-                    onLogout = {
-                        navController.navigate(Screen.Login.route) {
-                            popUpTo(0) { inclusive = true }
+                    )
+                }
+                composable(Screen.Dashboard.route) {
+                    DashboardScreen(coursesViewModel = coursesViewModel)
+                }
+                composable(Screen.Courses.route) {
+                    CoursesScreen(
+                        viewModel = coursesViewModel,
+                        onNavigateToCourseDetail = { courseId ->
+                            navController.navigate(Screen.CourseDetail.createRoute(courseId))
                         }
-                    }
-                )
+                    )
+                }
+                composable(
+                    route = Screen.CourseDetail.route,
+                    arguments = listOf(navArgument("courseId") { type = NavType.StringType })
+                ) { backStackEntry ->
+                    val courseId = backStackEntry.arguments?.getString("courseId") ?: return@composable
+                    CourseDetailScreen(
+                        courseId = courseId,
+                        viewModel = coursesViewModel,
+                        onNavigateBack = { navController.popBackStack() }
+                    )
+                }
+                composable(Screen.Notes.route) {
+                    NotesScreen(
+                        viewModel = notesViewModel,
+                        onNavigateToNoteDetail = { noteId ->
+                             navController.navigate(Screen.NoteDetail.createRoute(noteId))
+                        }
+                    )
+                }
+                composable(
+                    route = Screen.NoteDetail.route,
+                    arguments = listOf(navArgument("noteId") { type = NavType.StringType })
+                ) { backStackEntry ->
+                     val noteId = backStackEntry.arguments?.getString("noteId") ?: return@composable
+                     NoteDetailScreen(
+                         noteId = noteId,
+                         viewModel = notesViewModel,
+                         onNavigateBack = { navController.popBackStack() }
+                     )
+                }
+                composable(Screen.Notifications.route) {
+                    NotificationsScreen()
+                }
+                composable(Screen.Profile.route) {
+                    ProfileScreen(
+                        viewModel = authViewModel,
+                        onLogout = {
+                            navController.navigate(Screen.Login.route) {
+                                popUpTo(0) { inclusive = true }
+                            }
+                        }
+                    )
+                }
             }
             composable(Screen.AdminDashboard.route) {
                 AdminDashboardScreen(
