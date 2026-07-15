@@ -22,6 +22,10 @@ import com.example.aurveda.ui.screens.student.NoteDetailScreen
 import com.example.aurveda.ui.screens.student.NotificationsScreen
 import com.example.aurveda.ui.screens.student.ProfileScreen
 import com.example.aurveda.ui.screens.admin.AdminDashboardScreen
+import com.example.aurveda.ui.screens.admin.AdminManageCoursesScreen
+import com.example.aurveda.ui.screens.admin.AdminManageNotesScreen
+import com.example.aurveda.ui.screens.admin.AdminManageNotificationsScreen
+import com.example.aurveda.ui.screens.admin.AdminManageAdminsScreen
 import com.example.aurveda.ui.viewmodels.AuthViewModel
 import com.example.aurveda.ui.viewmodels.CoursesViewModel
 import com.example.aurveda.ui.viewmodels.NotesViewModel
@@ -36,7 +40,11 @@ enum class Screen(val route: String) {
     NoteDetail("note_detail/{noteId}"),
     Notifications("notifications"),
     Profile("profile"),
-    AdminDashboard("admin_dashboard");
+    AdminDashboard("admin_dashboard"),
+    AdminCourses("admin_courses"),
+    AdminNotes("admin_notes"),
+    AdminNotifications("admin_notifications"),
+    AdminStudents("admin_students");
 
     fun createRoute(id: String) = route.replace(Regex("\\{.*\\}"), id)
 }
@@ -178,6 +186,10 @@ fun AppNavigation(navController: NavHostController) {
             }
             composable(Screen.AdminDashboard.route) {
                 AdminDashboardScreen(
+                    onNavigateToCourses = { navController.navigate(Screen.AdminCourses.route) },
+                    onNavigateToNotes = { navController.navigate(Screen.AdminNotes.route) },
+                    onNavigateToNotifications = { navController.navigate(Screen.AdminNotifications.route) },
+                    onNavigateToStudents = { navController.navigate(Screen.AdminStudents.route) },
                     onLogout = {
                         authViewModel.logout()
                         navController.navigate(Screen.Login.route) {
@@ -185,6 +197,20 @@ fun AppNavigation(navController: NavHostController) {
                         }
                     }
                 )
+            }
+            if (isAdminFlavor) {
+                composable(Screen.AdminCourses.route) {
+                    AdminManageCoursesScreen(onNavigateBack = { navController.popBackStack() })
+                }
+                composable(Screen.AdminNotes.route) {
+                    AdminManageNotesScreen(onNavigateBack = { navController.popBackStack() })
+                }
+                composable(Screen.AdminNotifications.route) {
+                    AdminManageNotificationsScreen(onNavigateBack = { navController.popBackStack() })
+                }
+                composable(Screen.AdminStudents.route) {
+                    AdminManageAdminsScreen(onNavigateBack = { navController.popBackStack() })
+                }
             }
         }
     }

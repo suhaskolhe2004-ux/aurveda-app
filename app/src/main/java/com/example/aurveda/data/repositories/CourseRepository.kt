@@ -8,10 +8,13 @@ interface CourseRepository {
     suspend fun getCourses(subject: String? = null): List<Course>
     suspend fun getTrendingCourses(): List<Course>
     suspend fun getCourse(id: String): Course?
+    suspend fun addCourse(course: Course): Course
+    suspend fun updateCourse(course: Course)
+    suspend fun deleteCourse(id: String)
 }
 
 class MockCourseRepository : CourseRepository {
-    private val mockCourses = listOf(
+    private val mockCourses = mutableListOf(
         Course(
             id = "c1",
             title = "Anatomy 101",
@@ -46,10 +49,33 @@ class MockCourseRepository : CourseRepository {
         delay(300)
         return mockCourses.find { it.id == id }
     }
+
+    override suspend fun addCourse(course: Course): Course {
+        delay(500)
+        val newCourse = course.copy(id = java.util.UUID.randomUUID().toString())
+        mockCourses.add(newCourse)
+        return newCourse
+    }
+
+    override suspend fun updateCourse(course: Course) {
+        delay(500)
+        val index = mockCourses.indexOfFirst { it.id == course.id }
+        if (index != -1) {
+            mockCourses[index] = course
+        }
+    }
+
+    override suspend fun deleteCourse(id: String) {
+        delay(500)
+        mockCourses.removeAll { it.id == id }
+    }
 }
 
 class FirebaseCourseRepository : CourseRepository {
     override suspend fun getCourses(subject: String?): List<Course> { TODO("Not yet implemented") }
     override suspend fun getTrendingCourses(): List<Course> { TODO("Not yet implemented") }
     override suspend fun getCourse(id: String): Course? { TODO("Not yet implemented") }
+    override suspend fun addCourse(course: Course): Course { TODO("Not yet implemented") }
+    override suspend fun updateCourse(course: Course) { TODO("Not yet implemented") }
+    override suspend fun deleteCourse(id: String) { TODO("Not yet implemented") }
 }

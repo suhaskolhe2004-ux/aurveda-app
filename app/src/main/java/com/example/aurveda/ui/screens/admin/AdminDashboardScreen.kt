@@ -12,7 +12,13 @@ import com.example.aurveda.ui.theme.ListRow
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AdminDashboardScreen(onLogout: () -> Unit) {
+fun AdminDashboardScreen(
+    onNavigateToCourses: () -> Unit,
+    onNavigateToNotes: () -> Unit,
+    onNavigateToNotifications: () -> Unit,
+    onNavigateToStudents: () -> Unit,
+    onLogout: () -> Unit
+) {
     Scaffold { padding ->
         Column(
             modifier = Modifier
@@ -29,22 +35,22 @@ fun AdminDashboardScreen(onLogout: () -> Unit) {
             ListRow(
                 title = "Manage Courses",
                 subtitle = "Add, edit, or delete courses",
-                onClick = { /* Navigate */ }
+                onClick = onNavigateToCourses
             )
             ListRow(
                 title = "Manage Notes",
                 subtitle = "Upload and manage PDF notes",
-                onClick = { /* Navigate */ }
+                onClick = onNavigateToNotes
             )
             ListRow(
                 title = "Manage Notifications",
                 subtitle = "Broadcast announcements",
-                onClick = { /* Navigate */ }
+                onClick = onNavigateToNotifications
             )
             ListRow(
-                title = "Manage Students",
+                title = "Manage Platform Admins",
                 subtitle = "View and manage accounts",
-                onClick = { /* Navigate */ }
+                onClick = onNavigateToStudents
             )
 
             Spacer(modifier = Modifier.weight(1f))
