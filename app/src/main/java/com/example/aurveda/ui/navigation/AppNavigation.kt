@@ -6,14 +6,19 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.navArgument
 import com.example.aurveda.ui.screens.auth.LoginScreen
 import com.example.aurveda.ui.screens.auth.SignupScreen
 import com.example.aurveda.ui.screens.student.DashboardScreen
 import com.example.aurveda.ui.screens.student.CoursesScreen
+import com.example.aurveda.ui.screens.student.CourseDetailScreen
 import com.example.aurveda.ui.screens.student.NotesScreen
+import com.example.aurveda.ui.screens.student.NoteDetailScreen
+import com.example.aurveda.ui.screens.student.NotificationsScreen
 import com.example.aurveda.ui.screens.student.ProfileScreen
 import com.example.aurveda.ui.screens.admin.AdminDashboardScreen
 import com.example.aurveda.ui.viewmodels.AuthViewModel
@@ -25,9 +30,14 @@ enum class Screen(val route: String) {
     Signup("signup"),
     Dashboard("dashboard"),
     Courses("courses"),
+    CourseDetail("course_detail/{courseId}"),
     Notes("notes"),
+    NoteDetail("note_detail/{noteId}"),
+    Notifications("notifications"),
     Profile("profile"),
-    AdminDashboard("admin_dashboard")
+    AdminDashboard("admin_dashboard");
+
+    fun createRoute(id: String) = route.replace(Regex("\\{.*\\}"), id)
 }
 
 @Composable
@@ -44,6 +54,7 @@ fun AppNavigation(navController: NavHostController) {
         Screen.Dashboard,
         Screen.Courses,
         Screen.Notes,
+        Screen.Notifications,
         Screen.Profile
     )
     val showBottomNav = currentRoute in bottomNavScreens.map { it.route }
@@ -111,10 +122,45 @@ fun AppNavigation(navController: NavHostController) {
                 DashboardScreen(coursesViewModel = coursesViewModel)
             }
             composable(Screen.Courses.route) {
-                CoursesScreen(viewModel = coursesViewModel)
+                CoursesScreen(
+                    viewModel = coursesViewModel,
+                    onNavigateToCourseDetail = { courseId ->
+                        navController.navigate(Screen.CourseDetail.createRoute(courseId))
+                    }
+                )
+            }
+            composable(
+                route = Screen.CourseDetail.route,
+                arguments = listOf(navArgument("courseId") { type = NavType.StringType })
+            ) { backStackEntry ->
+                val courseId = backStackEntry.arguments?.getString("courseId") ?: return@composable
+                CourseDetailScreen(
+                    courseId = courseId,
+                    viewModel = coursesViewModel,
+                    onNavigateBack = { navController.popBackStack() }
+                )
             }
             composable(Screen.Notes.route) {
-                NotesScreen(viewModel = notesViewModel)
+                NotesScreen(
+                    viewModel = notesViewModel,
+                    onNavigateToNoteDetail = { noteId ->
+                         navController.navigate(Screen.NoteDetail.createRoute(noteId))
+                    }
+                )
+            }
+            composable(
+                route = Screen.NoteDetail.route,
+                arguments = listOf(navArgument("noteId") { type = NavType.StringType })
+            ) { backStackEntry ->
+                 val noteId = backStackEntry.arguments?.getString("noteId") ?: return@composable
+                 NoteDetailScreen(
+                     noteId = noteId,
+                     viewModel = notesViewModel,
+                     onNavigateBack = { navController.popBackStack() }
+                 )
+            }
+            composable(Screen.Notifications.route) {
+                NotificationsScreen()
             }
             composable(Screen.Profile.route) {
                 ProfileScreen(

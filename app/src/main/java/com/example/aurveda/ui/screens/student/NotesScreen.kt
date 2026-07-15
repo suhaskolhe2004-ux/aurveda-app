@@ -1,5 +1,6 @@
 package com.example.aurveda.ui.screens.student
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -14,6 +15,7 @@ import com.example.aurveda.ui.viewmodels.NotesViewModel
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NotesScreen(
+    onNavigateToNoteDetail: (String) -> Unit,
     viewModel: NotesViewModel = viewModel()
 ) {
     val notes by viewModel.notes.collectAsState()
@@ -34,7 +36,12 @@ fun NotesScreen(
             } else {
                 LazyColumn {
                     items(notes) { note ->
-                        Card(modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp)) {
+                        Card(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 8.dp)
+                                .clickable { onNavigateToNoteDetail(note.id) }
+                        ) {
                             Column(modifier = Modifier.padding(16.dp)) {
                                 Text(note.title, style = MaterialTheme.typography.titleMedium)
                                 val priceText = if (note.isFree) "Free" else "Paid - ₹${note.price}"

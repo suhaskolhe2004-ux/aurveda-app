@@ -1,5 +1,6 @@
 package com.example.aurveda.ui.screens.student
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -14,6 +15,7 @@ import com.example.aurveda.ui.viewmodels.CoursesViewModel
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CoursesScreen(
+    onNavigateToCourseDetail: (String) -> Unit,
     viewModel: CoursesViewModel = viewModel()
 ) {
     val courses by viewModel.courses.collectAsState()
@@ -34,7 +36,12 @@ fun CoursesScreen(
             } else {
                 LazyColumn {
                     items(courses) { course ->
-                        Card(modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp)) {
+                        Card(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 8.dp)
+                                .clickable { onNavigateToCourseDetail(course.id) }
+                        ) {
                             Column(modifier = Modifier.padding(16.dp)) {
                                 Text(course.title, style = MaterialTheme.typography.titleMedium)
                                 Text(course.description, style = MaterialTheme.typography.bodyMedium)
