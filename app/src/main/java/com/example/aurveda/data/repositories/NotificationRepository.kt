@@ -39,9 +39,3 @@ class MockNotificationRepository : NotificationRepository {
         mockNotifications.removeAll { it.id == id }
     }
 }
-
-class FirebaseNotificationRepository : NotificationRepository {
-    override suspend fun getNotifications(): List<Notification> { TODO("Not yet implemented") }
-    override suspend fun addNotification(title: String, message: String, authorId: String): Notification { TODO("Not yet implemented") }
-    override suspend fun deleteNotification(id: String) { TODO("Not yet implemented") }
-}

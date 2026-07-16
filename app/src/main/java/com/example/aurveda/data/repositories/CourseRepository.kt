@@ -70,12 +70,3 @@ class MockCourseRepository : CourseRepository {
         mockCourses.removeAll { it.id == id }
     }
 }
-
-class FirebaseCourseRepository : CourseRepository {
-    override suspend fun getCourses(subject: String?): List<Course> { TODO("Not yet implemented") }
-    override suspend fun getTrendingCourses(): List<Course> { TODO("Not yet implemented") }
-    override suspend fun getCourse(id: String): Course? { TODO("Not yet implemented") }
-    override suspend fun addCourse(course: Course): Course { TODO("Not yet implemented") }
-    override suspend fun updateCourse(course: Course) { TODO("Not yet implemented") }
-    override suspend fun deleteCourse(id: String) { TODO("Not yet implemented") }
-}

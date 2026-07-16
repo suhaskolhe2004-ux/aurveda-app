@@ -63,12 +63,3 @@ class MockAuthRepository : AuthRepository {
 
     override fun getCurrentUser(): User? = currentUser
 }
-
-// Placeholder for future Firebase implementation
-class FirebaseAuthRepository : AuthRepository {
-    override suspend fun sendOtp(mobileNumber: String): Boolean { TODO("Not yet implemented") }
-    override suspend fun verifyOtpAndSignup(mobileNumber: String, otp: String, password: String, user: User): Result<User> { TODO("Not yet implemented") }
-    override suspend fun login(mobileNumber: String, password: String): Result<User> { TODO("Not yet implemented") }
-    override suspend fun logout() { TODO("Not yet implemented") }
-    override fun getCurrentUser(): User? { TODO("Not yet implemented") }
-}

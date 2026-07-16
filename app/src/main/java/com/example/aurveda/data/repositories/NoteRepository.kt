@@ -74,12 +74,3 @@ class MockNoteRepository : NoteRepository {
         mockNotes.removeAll { it.id == id }
     }
 }
-
-class FirebaseNoteRepository : NoteRepository {
-    override suspend fun getNotes(subject: String?, freeOnly: Boolean): List<Note> { TODO("Not yet implemented") }
-    override suspend fun getTrendingNotes(): List<Note> { TODO("Not yet implemented") }
-    override suspend fun getNote(id: String): Note? { TODO("Not yet implemented") }
-    override suspend fun addNote(note: Note): Note { TODO("Not yet implemented") }
-    override suspend fun updateNote(note: Note) { TODO("Not yet implemented") }
-    override suspend fun deleteNote(id: String) { TODO("Not yet implemented") }
-}
