@@ -94,4 +94,7 @@ dependencies {
     implementation("com.google.firebase:firebase-firestore")
     implementation("com.google.firebase:firebase-storage")
     implementation("com.google.firebase:firebase-functions")
+
+    // Payments
+    implementation("com.razorpay:checkout:1.6.38")
 }

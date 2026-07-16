@@ -1,6 +1,7 @@
 package com.example.aurveda.data.repositories
 
 import com.example.aurveda.data.models.Notification
+import com.example.aurveda.data.models.Comment
 import kotlinx.coroutines.delay
 import java.util.UUID
 
@@ -8,6 +9,7 @@ interface NotificationRepository {
     suspend fun getNotifications(): List<Notification>
     suspend fun addNotification(title: String, message: String, authorId: String): Notification
     suspend fun deleteNotification(id: String)
+    suspend fun addComment(notificationId: String, authorName: String, text: String): Comment
 }
 
 class MockNotificationRepository : NotificationRepository {
@@ -37,5 +39,21 @@ class MockNotificationRepository : NotificationRepository {
     override suspend fun deleteNotification(id: String) {
         delay(500)
         mockNotifications.removeAll { it.id == id }
+    }
+
+    override suspend fun addComment(notificationId: String, authorName: String, text: String): Comment {
+        delay(500)
+        val index = mockNotifications.indexOfFirst { it.id == notificationId }
+        val newComment = Comment(
+            id = UUID.randomUUID().toString(),
+            authorName = authorName,
+            text = text,
+            timestamp = "Just now"
+        )
+        if (index != -1) {
+            val notification = mockNotifications[index]
+            mockNotifications[index] = notification.copy(comments = notification.comments + newComment)
+        }
+        return newComment
     }
 }

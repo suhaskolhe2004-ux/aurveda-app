@@ -70,8 +70,9 @@ fun CourseDetailScreen(
         ) {
             // Real YouTube Player
             if (currentVideoId.isNotEmpty()) {
-                AndroidView(
-                    modifier = Modifier.fillMaxWidth().height(220.dp),
+                Box(modifier = Modifier.fillMaxWidth().height(220.dp)) {
+                    AndroidView(
+                        modifier = Modifier.fillMaxSize(),
                     factory = { ctx ->
                         YouTubePlayerView(ctx).apply {
                             (ctx as? LifecycleOwner)?.lifecycle?.addObserver(this)
@@ -83,11 +84,21 @@ fun CourseDetailScreen(
                             })
                         }
                     },
-                    update = {
-                        // Load new video when currentVideoId changes
-                        youtubePlayer?.loadVideo(currentVideoId, 0f)
-                    }
-                )
+                        update = {
+                            // Load new video when currentVideoId changes
+                            youtubePlayer?.loadVideo(currentVideoId, 0f)
+                        }
+                    )
+                    // Watermark Overlay
+                    Text(
+                        text = "User: Current Student\nMobile: 1234567890",
+                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.3f),
+                        style = MaterialTheme.typography.bodyMedium,
+                        modifier = Modifier
+                            .align(Alignment.Center)
+                            .padding(16.dp)
+                    )
+                }
             } else {
                 Card(modifier = Modifier.fillMaxWidth().height(220.dp)) {
                      Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {

@@ -20,12 +20,15 @@ import com.example.aurveda.ui.screens.student.CourseDetailScreen
 import com.example.aurveda.ui.screens.student.NotesScreen
 import com.example.aurveda.ui.screens.student.NoteDetailScreen
 import com.example.aurveda.ui.screens.student.NotificationsScreen
+import com.example.aurveda.ui.screens.student.NotificationDetailScreen
 import com.example.aurveda.ui.screens.student.ProfileScreen
 import com.example.aurveda.ui.screens.admin.AdminDashboardScreen
 import com.example.aurveda.ui.screens.admin.AdminManageCoursesScreen
 import com.example.aurveda.ui.screens.admin.AdminManageNotesScreen
 import com.example.aurveda.ui.screens.admin.AdminManageNotificationsScreen
 import com.example.aurveda.ui.screens.admin.AdminManageAdminsScreen
+import com.example.aurveda.ui.screens.admin.AdminAuditLogScreen
+import com.example.aurveda.ui.screens.admin.AdminReviewsScreen
 import com.example.aurveda.ui.viewmodels.AuthViewModel
 import com.example.aurveda.ui.viewmodels.CoursesViewModel
 import com.example.aurveda.ui.viewmodels.NotesViewModel
@@ -39,12 +42,15 @@ enum class Screen(val route: String) {
     Notes("notes"),
     NoteDetail("note_detail/{noteId}"),
     Notifications("notifications"),
+    NotificationDetail("notification_detail/{notificationId}"),
     Profile("profile"),
     AdminDashboard("admin_dashboard"),
     AdminCourses("admin_courses"),
     AdminNotes("admin_notes"),
     AdminNotifications("admin_notifications"),
-    AdminStudents("admin_students");
+    AdminStudents("admin_students"),
+    AdminAuditLog("admin_audit_log"),
+    AdminReviews("admin_reviews");
 
     fun createRoute(id: String) = route.replace(Regex("\\{.*\\}"), id)
 }
@@ -171,7 +177,21 @@ fun AppNavigation(navController: NavHostController) {
                      )
                 }
                 composable(Screen.Notifications.route) {
-                    NotificationsScreen()
+                    NotificationsScreen(
+                        onNavigateToNotificationDetail = { id ->
+                            navController.navigate(Screen.NotificationDetail.createRoute(id))
+                        }
+                    )
+                }
+                composable(
+                    route = Screen.NotificationDetail.route,
+                    arguments = listOf(navArgument("notificationId") { type = NavType.StringType })
+                ) { backStackEntry ->
+                    val notificationId = backStackEntry.arguments?.getString("notificationId") ?: return@composable
+                    NotificationDetailScreen(
+                        notificationId = notificationId,
+                        onNavigateBack = { navController.popBackStack() }
+                    )
                 }
                 composable(Screen.Profile.route) {
                     ProfileScreen(
@@ -190,6 +210,8 @@ fun AppNavigation(navController: NavHostController) {
                     onNavigateToNotes = { navController.navigate(Screen.AdminNotes.route) },
                     onNavigateToNotifications = { navController.navigate(Screen.AdminNotifications.route) },
                     onNavigateToStudents = { navController.navigate(Screen.AdminStudents.route) },
+                    onNavigateToAuditLog = { navController.navigate(Screen.AdminAuditLog.route) },
+                    onNavigateToReviews = { navController.navigate(Screen.AdminReviews.route) },
                     onLogout = {
                         authViewModel.logout()
                         navController.navigate(Screen.Login.route) {
@@ -210,6 +232,12 @@ fun AppNavigation(navController: NavHostController) {
                 }
                 composable(Screen.AdminStudents.route) {
                     AdminManageAdminsScreen(onNavigateBack = { navController.popBackStack() })
+                }
+                composable(Screen.AdminAuditLog.route) {
+                    AdminAuditLogScreen(onNavigateBack = { navController.popBackStack() })
+                }
+                composable(Screen.AdminReviews.route) {
+                    AdminReviewsScreen(onNavigateBack = { navController.popBackStack() })
                 }
             }
         }

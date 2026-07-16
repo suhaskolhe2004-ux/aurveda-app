@@ -17,6 +17,8 @@ fun AdminDashboardScreen(
     onNavigateToNotes: () -> Unit,
     onNavigateToNotifications: () -> Unit,
     onNavigateToStudents: () -> Unit,
+    onNavigateToAuditLog: () -> Unit,
+    onNavigateToReviews: () -> Unit,
     onLogout: () -> Unit
 ) {
     Scaffold { padding ->
@@ -51,6 +53,16 @@ fun AdminDashboardScreen(
                 title = "Manage Platform Admins",
                 subtitle = "View and manage accounts",
                 onClick = onNavigateToStudents
+            )
+            ListRow(
+                title = "Audit Log",
+                subtitle = "Track admin actions",
+                onClick = onNavigateToAuditLog
+            )
+            ListRow(
+                title = "Moderate Reviews",
+                subtitle = "Manage course & note reviews",
+                onClick = onNavigateToReviews
             )
 
             Spacer(modifier = Modifier.weight(1f))

@@ -8,20 +8,24 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.Alignment
+import androidx.compose.foundation.clickable
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.aurveda.ui.theme.EmptyState
 import com.example.aurveda.ui.theme.IosCard
+import com.example.aurveda.ui.theme.HeartbeatLoader
+import com.example.aurveda.ui.viewmodels.AdminNotificationsViewModel
 
 data class NotificationMock(val id: String, val title: String, val message: String, val timestamp: String)
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun NotificationsScreen() {
-    val notifications = remember {
-        listOf(
-            NotificationMock("1", "New Course Available", "Anatomy 101 is now live!", "2h ago"),
-            NotificationMock("2", "Notes Update", "Physiology flashcards have been updated.", "1d ago")
-        )
-    }
+fun NotificationsScreen(
+    onNavigateToNotificationDetail: (String) -> Unit,
+    viewModel: AdminNotificationsViewModel = viewModel() // Reusing the same VM since we just need the read flow
+) {
+    val notifications by viewModel.notifications.collectAsState()
+    val loading by viewModel.loading.collectAsState()
 
     Scaffold { padding ->
         Column(
@@ -34,12 +38,21 @@ fun NotificationsScreen() {
             Text("Notifications", style = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.Bold))
             Spacer(modifier = Modifier.height(16.dp))
 
-            if (notifications.isEmpty()) {
+            if (loading) {
+                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                    HeartbeatLoader()
+                }
+            } else if (notifications.isEmpty()) {
                 EmptyState("No recent announcements.")
             } else {
                 LazyColumn {
                     items(notifications) { notification ->
-                        IosCard(modifier = Modifier.fillMaxWidth().padding(vertical = 6.dp)) {
+                        IosCard(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 6.dp)
+                                .clickable { onNavigateToNotificationDetail(notification.id) }
+                        ) {
                             Column(modifier = Modifier.padding(16.dp)) {
                                 Text(notification.title, style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.SemiBold))
                                 Spacer(modifier = Modifier.height(4.dp))
