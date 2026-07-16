@@ -23,6 +23,10 @@ fun SignupScreen(
     var otp by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var name by remember { mutableStateOf("") }
+    var passoutYear by remember { mutableStateOf("2026") }
+    var course by remember { mutableStateOf("MBBS") }
+    var yearExpanded by remember { mutableStateOf(false) }
+    var courseExpanded by remember { mutableStateOf(false) }
 
     val loading by viewModel.loading.collectAsState()
     val error by viewModel.error.collectAsState()
@@ -89,6 +93,64 @@ fun SignupScreen(
                         modifier = Modifier.fillMaxWidth()
                     )
                     Spacer(modifier = Modifier.height(16.dp))
+                    // Passout Year Dropdown Mock
+                    ExposedDropdownMenuBox(
+                        expanded = yearExpanded,
+                        onExpandedChange = { yearExpanded = !yearExpanded }
+                    ) {
+                        OutlinedTextField(
+                            value = passoutYear,
+                            onValueChange = {},
+                            readOnly = true,
+                            label = { Text("Passout Year") },
+                            modifier = Modifier.fillMaxWidth().menuAnchor()
+                        )
+                        ExposedDropdownMenu(
+                            expanded = yearExpanded,
+                            onDismissRequest = { yearExpanded = false }
+                        ) {
+                            listOf("2026", "2027", "2028", "2029").forEach { selectionOption ->
+                                DropdownMenuItem(
+                                    text = { Text(selectionOption) },
+                                    onClick = {
+                                        passoutYear = selectionOption
+                                        yearExpanded = false
+                                    }
+                                )
+                            }
+                        }
+                    }
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    // Course Dropdown Mock
+                    ExposedDropdownMenuBox(
+                        expanded = courseExpanded,
+                        onExpandedChange = { courseExpanded = !courseExpanded }
+                    ) {
+                        OutlinedTextField(
+                            value = course,
+                            onValueChange = {},
+                            readOnly = true,
+                            label = { Text("Course Program") },
+                            modifier = Modifier.fillMaxWidth().menuAnchor()
+                        )
+                        ExposedDropdownMenu(
+                            expanded = courseExpanded,
+                            onDismissRequest = { courseExpanded = false }
+                        ) {
+                            listOf("MBBS", "BDS", "BAMS", "B.Sc Nursing").forEach { selectionOption ->
+                                DropdownMenuItem(
+                                    text = { Text(selectionOption) },
+                                    onClick = {
+                                        course = selectionOption
+                                        courseExpanded = false
+                                    }
+                                )
+                            }
+                        }
+                    }
+                    Spacer(modifier = Modifier.height(16.dp))
+
                     OutlinedTextField(
                         value = password,
                         onValueChange = { password = it },

@@ -84,4 +84,7 @@ dependencies {
     androidTestImplementation("androidx.compose.ui:ui-test-junit4")
     debugImplementation("androidx.compose.ui:ui-tooling")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
+
+    // YouTube Player
+    implementation("com.pierfrancescosoffritti.androidyoutubeplayer:core:12.1.0")
 }
